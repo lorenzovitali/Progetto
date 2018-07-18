@@ -1,7 +1,18 @@
-#include "option.hh"
+#include "Option.hh"
 
-VanillaOption::VanillaOption() {}
+EuropeanCall::EuropeanCall(double _E, double _r, double _T, double _sigma){
+  E = _E;
+  r = _r;
+  T = _T;
+  sigma = _sigma;
 
-VanillaOption::VanillaOption(double _K, double _r, double _T,
-                             double _sigma, PayOff* _pay_off) :
-  K(_K), r(_r), T(_T), sigma(_sigma), pay_off(_pay_off) {}
+  k = r/(0.5*sigma*sigma);
+}
+
+void EuropeanCall::set_payoff(double x){
+  pay_off = std::max(exp(0.5*(k+1)*x) - exp(0.5*(k-1)*x), 0.0);
+}
+
+void EuropeanPut::set_payoff(double x){
+  pay_off = std::max(exp(0.5*(k-1)*x) - exp(0.5*(k+1)*x), 0.0);
+}

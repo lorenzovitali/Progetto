@@ -1,12 +1,12 @@
 #include <fstream>
-#include "fdm.hh"
+#include "FDM.hh"
 
-FDMBase::FDMBase(double _x_dom, unsigned long _J, double _t_dom, unsigned long _N, ConvectionDiffusionPDE* _pde):
+FDMBase::FDMBase(double _x_dom, unsigned long _J, double _t_dom, unsigned long _N, PDE* _pde):
                       x_dom(_x_dom), J(_J), t_dom(_t_dom), N(_N), pde(_pde) {}
 
 
 
-FDMEulerExplicit::FDMEulerExplicit(double _x_dom, unsigned long _J, double _t_dom, unsigned long _N, ConvectionDiffusionPDE* _pde):
+FDMEulerExplicit::FDMEulerExplicit(double _x_dom, unsigned long _J, double _t_dom, unsigned long _N, PDE* _pde):
                         FDMBase(_x_dom, _J, _t_dom, _N, _pde) {
 
                                       calculate_step_sizes();

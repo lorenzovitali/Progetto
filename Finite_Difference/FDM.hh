@@ -1,14 +1,14 @@
 #ifndef FDM_HH
 #define FDM_HH
 
-#include "pde.h"
+#include "PDE.hh"
 #include <vector>
 
 
 // Finite Difference Method - Abstract Base Class
 class FDMBase {
  protected:
-  ConvectionDiffusionPDE* pde;
+  PDE* pde;
 
   // Space discretisation
   double x_dom;      // Spatial extent [0.0, x_dom]
@@ -58,7 +58,7 @@ class FDMEulerExplicit : public FDMBase {
  public:
   FDMEulerExplicit(double _x_dom, unsigned long _J,
                    double _t_dom, unsigned long _N,
-                   ConvectionDiffusionPDE* _pde);
+                   PDE* _pde);
 
   void step_march();
 };
