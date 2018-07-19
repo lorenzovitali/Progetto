@@ -1,8 +1,5 @@
 #include "PDE.hh"
 
-
-BlackScholesPDE::BlackScholesPDE(Option* _option) : option(_option) {}
-
 // Diffusion coefficient
 double BlackScholesPDE::diff_coeff(void) const {
   return 1;

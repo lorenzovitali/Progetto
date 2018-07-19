@@ -1,13 +1,14 @@
 #include <fstream>
+#include <iostream>
 #include "FDM.hh"
 
-FDMBase::FDMBase(double _x_dom, unsigned long _J, double _t_dom, unsigned long _N, PDE* _pde):
-                      x_dom(_x_dom), J(_J), t_dom(_t_dom), N(_N), pde(_pde) {}
+FDMBase::FDMBase(unsigned long n, unsigned long _M, BlackScholesPDE* _pde):
+       n(_n), M(_M), pde(_pde) {}
 
 
 
-FDMEulerExplicit::FDMEulerExplicit(double _x_dom, unsigned long _J, double _t_dom, unsigned long _N, PDE* _pde):
-                        FDMBase(_x_dom, _J, _t_dom, _N, _pde) {
+FDMEulerExplicit::FDMEulerExplicit(unsigned long n, unsigned long _M, BlackScholesPDE* _pde):
+                        FDMBase(_n, _M, _pde) {
 
                                       calculate_step_sizes();
                                       set_initial_conditions();
@@ -15,11 +16,16 @@ FDMEulerExplicit::FDMEulerExplicit(double _x_dom, unsigned long _J, double _t_do
                                     }
 
 void FDMEulerExplicit::calculate_step_sizes() {
-  dx = x_dom/static_cast<double>(J-1);
-  dt = t_dom/static_cast<double>(N-1);
+
+  Option option = pde->get_option();
+
+  dx = 2* N / n;
+
+  dt = (0.5* option->get_sigma() * option->get_sigma() * option->get_T())/M;
+
 }
 
-void FDMEulerExplicit::set_initial_conditions() {
+/*void FDMEulerExplicit::set_initial_conditions() {
   // Spatial settings
   double cur_spot = 0.0;
 
@@ -36,7 +42,7 @@ void FDMEulerExplicit::set_initial_conditions() {
   // Temporal settings
   prev_t = 0.0;
   cur_t = 0.0;
-}
+}*/
 
 void FDMEulerExplicit::calculate_boundary_conditions() {
   new_result[0] = pde->boundary_left(prev_t, x_values[0]);
@@ -60,10 +66,9 @@ void FDMEulerExplicit::calculate_inner_domain() {
                       (beta * old_result[j]) +
                       (gamma * old_result[j+1]) )/(dx*dx) -
       (dt*(pde->source_coeff(prev_t, x_values[j])));
-  }
 }
 
-void FDMEulerExplicit::step_march() {
+/*void FDMEulerExplicit::step_march() {
   std::ofstream fdm_out("fdm.csv");
 
   while(cur_t < t_dom) {
@@ -79,4 +84,4 @@ void FDMEulerExplicit::step_march() {
   }
 
   fdm_out.close();
-}
+}*/

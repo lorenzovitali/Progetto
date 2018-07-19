@@ -13,6 +13,7 @@ class Option {
     double k;
     double pay_off;
 
+
   public:
     Option() = default;
 
@@ -36,6 +37,7 @@ class Option {
 
     double
     get_k() const{return k;}
+
 
 };
 
