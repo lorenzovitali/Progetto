@@ -1,13 +1,7 @@
-#include <fstream>
 #include <iostream>
 #include "FDM.hh"
 
-FDMBase::FDMBase(unsigned long n, unsigned long _M, BlackScholesPDE* _pde):
-       n(_n), M(_M), pde(_pde) {}
-
-
-
-FDMEulerExplicit::FDMEulerExplicit(unsigned long n, unsigned long _M, BlackScholesPDE* _pde):
+FDMEulerExplicit::FDMEulerExplicit(unsigned long _n, unsigned long _M, BlackScholesPDE* _pde):
                         FDMBase(_n, _M, _pde) {
 
                                       calculate_step_sizes();
@@ -17,71 +11,73 @@ FDMEulerExplicit::FDMEulerExplicit(unsigned long n, unsigned long _M, BlackSchol
 
 void FDMEulerExplicit::calculate_step_sizes() {
 
-  Option option = pde->get_option();
+  dx = (Nplus - Nminus) / n;
 
-  dx = 2* N / n;
-
-  dt = (0.5* option->get_sigma() * option->get_sigma() * option->get_T())/M;
+  dt = (0.5* pde->get_option()->get_sigma() * pde->get_option()->get_sigma() * pde->get_option()->get_T())/M;
 
 }
 
-/*void FDMEulerExplicit::set_initial_conditions() {
+void FDMEulerExplicit::set_initial_conditions() {
   // Spatial settings
-  double cur_spot = 0.0;
+  double cur_spot = -Nminus*dx;
+  u0.resize(M);
 
-  old_result.resize(J, 0.0);
-  new_result.resize(J, 0.0);
-  x_values.resize(J, 0.0);
+  for (unsigned long i=0; i<n; i++) {
 
-  for (unsigned long j=0; j<J; j++) {
-    cur_spot = static_cast<double>(j)*dx;
-    old_result[j] = pde->init_cond(cur_spot);
-    x_values[j] = cur_spot;
+    cur_spot = static_cast<double>(i)*dx;
+    u0[i] = pde->init_cond(cur_spot);
+    x_values.push_back(cur_spot);
+
   }
-
-  // Temporal settings
-  prev_t = 0.0;
-  cur_t = 0.0;
-}*/
-
-void FDMEulerExplicit::calculate_boundary_conditions() {
-  new_result[0] = pde->boundary_left(prev_t, x_values[0]);
-  new_result[J-1] = pde->boundary_right(prev_t, x_values[J-1]);
 }
 
-void FDMEulerExplicit::calculate_inner_domain() {
-  // Only use inner result indices (1 to J-2)
-  for (unsigned long j=1; j<J-1; j++) {
-    // Temporary variables used throughout
-    double dt_sig = dt * (pde->diff_coeff(prev_t, x_values[j]));
-    double dt_sig_2 = dt * dx * 0.5 * (pde->conv_coeff(prev_t, x_values[j]));
-
-    // Differencing coefficients (see \alpha, \beta and \gamma in text)
-    alpha = dt_sig - dt_sig_2;
-    beta = dx * dx - (2.0 * dt_sig) + (dt * dx * dx * (pde->zero_coeff(prev_t, x_values[j])));
-    gamma = dt_sig + dt_sig_2;
-
-    // Update inner values of spatial discretisation grid (Explicit Euler)
-    new_result[j] = ( (alpha * old_result[j-1]) +
-                      (beta * old_result[j]) +
-                      (gamma * old_result[j+1]) )/(dx*dx) -
-      (dt*(pde->source_coeff(prev_t, x_values[j])));
+void FDMEulerExplicit::calculate_boundary_conditions_call(Eigen::VectorXd & u_new) {
+  u_new[0] = pde->call_boundary_left();
+  u_new[n-1] = pde->call_boundary_right(Nplus*dx);
 }
 
-/*void FDMEulerExplicit::step_march() {
-  std::ofstream fdm_out("fdm.csv");
+matrix FDMEulerExplicit::solve(){
 
-  while(cur_t < t_dom) {
-    cur_t = prev_t + dt;
-    calculate_boundary_conditions();
-    calculate_inner_domain();
-    for (int j=0; j<J; j++) {
-      fdm_out << x_values[j] << " " << prev_t << " " << new_result[j] << std::endl;
-    }
+  matrix result;
+  //bulding matrix A and I;
+  Eigen::SparseMatrix<double, Eigen::RowMajor> A;
+  Eigen::SparseMatrix<double, Eigen::RowMajor> I;
+  A.resize(n,n);
+  I.resize(n,n);
 
-    old_result = new_result;
-    prev_t = cur_t;
+  using T = Eigen::Triplet<double>;
+  std::vector<T> coeff;
+
+  coeff.emplace_back(0, 0, 2);
+  coeff.emplace_back(0, 1, -1);
+  coeff.emplace_back(n-1 ,n-1, -1);
+  coeff.emplace_back(n-1 ,n-2, 2);
+
+  for (unsigned i = 1; i < n-1; i++){
+    coeff.emplace_back(i,i,2);
+    coeff.emplace_back(i,i-1,-1);
+    coeff.emplace_back(i,i+1,-1);
+  }
+  A.setFromTriplets(coeff.begin(), coeff.end());
+  coeff.clear();
+
+  for (unsigned i = 0; i < n; i++){
+    coeff.emplace_back(i,i,1);
   }
 
-  fdm_out.close();
-}*/
+  I.setFromTriplets(coeff.begin(), coeff.end());
+
+  Eigen::VectorXd u = u0;
+  calculate_boundary_conditions_call(u);
+  result.push_back(u);
+  alpha = dt/(dx*dx);
+
+  for(unsigned j = 1; j < M; j++){
+    u = (I-alpha*A)*u;
+    calculate_boundary_conditions_call(u);
+    result.push_back(u);
+  }
+
+  return result;
+
+}
