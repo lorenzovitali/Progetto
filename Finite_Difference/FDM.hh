@@ -4,7 +4,7 @@
 #include <vector>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
-//#include <Eigen/superlu>
+#include <Eigen/SparseLU>
 
 #include "PDE.hh"
 
@@ -17,7 +17,7 @@ class FDMBase {
   //Space domain [Nminus*dx,Nplus*dx]
   int long Nminus = -500;
   unsigned long Nplus =500;
-  unsigned long n;
+  unsigned long n; //number of space intervals
   double dx;
   std::vector<double> x_values;
 
@@ -31,31 +31,47 @@ class FDMBase {
   //initial vector;
   Eigen::VectorXd u0;
 
-  // Constructor
-  FDMBase(unsigned long _n , unsigned long _M, BlackScholesPDE* _pde): n(_n), M(_M), pde(_pde){}
+  //matrices
+  Eigen::SparseMatrix<double, Eigen::RowMajor> A, I;
 
-  virtual void calculate_step_sizes() = 0;
-  virtual void set_initial_conditions() = 0;
-  virtual void calculate_boundary_conditions_call(Eigen::VectorXd&) = 0;
-  virtual void calculate_boundary_conditions_put() = 0;
+  // Constructor
+  FDMBase(unsigned long _n , unsigned long _M, BlackScholesPDE* _pde);
+
+  virtual void calculate_step_sizes();
+  virtual void set_initial_conditions();
+  virtual void calculate_boundary_conditions_call(Eigen::VectorXd&);
+  //virtual void calculate_boundary_conditions_put();
 
  public:
 
+  void BuildMatrix();
   virtual matrix solve() = 0;
 };
 
 
 class FDMEulerExplicit : public FDMBase {
- protected:
-  void calculate_step_sizes();
-  void set_initial_conditions();
-  void calculate_boundary_conditions_call(Eigen::VectorXd&);
-  virtual void calculate_boundary_conditions_put();
-
  public:
-  FDMEulerExplicit(unsigned long _n, unsigned long _M, BlackScholesPDE* _pde);
+  FDMEulerExplicit(unsigned long _n, unsigned long _M, BlackScholesPDE* _pde):FDMBase(_n, _M, _pde){}
 
   matrix solve();
 };
+
+
+class FDMEulerImplicit : public FDMBase{
+  public:
+    FDMEulerImplicit(unsigned long _n, unsigned long _M, BlackScholesPDE* _pde):FDMBase(_n, _M, _pde){}
+
+    matrix solve();
+};
+
+class FDMCranckNicholson : public FDMBase{
+public:
+  FDMCranckNicholson(unsigned long _n, unsigned long _M, BlackScholesPDE* _pde):FDMBase(_n, _M, _pde){}
+
+  matrix solve();
+};
+
+
+
 
 #endif
