@@ -1,5 +1,6 @@
 #include <iostream>
 #include "FDM.hh"
+//Quasi ultimato
 
 FDMBase::FDMBase(unsigned long _n, unsigned long _M, BlackScholesPDE* _pde):n(_n), M(_M), pde(_pde){
 
