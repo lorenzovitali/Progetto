@@ -1,4 +1,4 @@
-CXX = g++
+CXX = g++ -g
 CPPFLAGS = -std=c++11 -Wall
 DIR = $(mkEigenInc)
 LIB = $(mkEigenLib)
