@@ -41,7 +41,7 @@ void FDMBase::BuildMatrix(){
 
 void FDMBase::calculate_step_sizes() {
 
-  dx = (Nplus - Nminus) / n;
+  dx = static_cast<double> (Nplus - Nminus)/ n;
 
   dt = (0.5* pde->get_option()->get_sigma() * pde->get_option()->get_sigma() * pde->get_option()->get_T())/M;
 

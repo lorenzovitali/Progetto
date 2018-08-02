@@ -16,8 +16,8 @@ class FDMBase {
   BlackScholesPDE* pde;
 
   //Space domain [Nminus*dx,Nplus*dx]
-  int long Nminus = -100;
-  unsigned long Nplus =100;
+  int long Nminus = -50;
+  unsigned long Nplus = 50;
   unsigned long n; //number of space intervals
   double dx;
   std::vector<double> x_values;

@@ -1,15 +1,18 @@
 #include "Option.hh"
 #include "PDE.hh"
 #include "FDM.hh"
+#include "GetPot"
 #include <iostream>
 
-int main(){
-  double E = 0.5;
-  double r = 0.05;
-  double T = 1.00;
-  double sigma = 0.2;
-  unsigned n = 100; //space intervals
-  unsigned M = 10; //time intervals
+int main(int argc, char* argv[]){
+  
+  GetPot file("input.txt");
+  double E = file("E", 0.0);
+  double r = file("r", 0.05);
+  double T = file("T", 1.00);
+  double sigma = file("sigma", 0.2);
+  unsigned n = file("n", 1000); //space intervals
+  unsigned M = file("M", 10); //time intervals
 
   Option* call = new EuropeanCall(E, r, T, sigma);
   BlackScholesPDE* pde = new BlackScholesPDE(call);
