@@ -45,6 +45,10 @@ class FDMBase {
 
  public:
 
+  double get_dt()const{ return dt; }
+  double get_dx()const{ return dx; }
+  double get_alpha()const{ return alpha; }
+
   void BuildMatrix();
   virtual matrix solve() = 0;
 };
