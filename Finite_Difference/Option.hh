@@ -1,6 +1,7 @@
 #ifndef OPTION_HH
 #define OPTION_HH
 
+#include <iostream>
 #include <algorithm>
 #include <math.h>
 
