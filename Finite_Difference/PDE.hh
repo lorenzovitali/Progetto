@@ -23,10 +23,10 @@ class BlackScholesPDE {
     call_boundary_left(void) const;
 
     double
-    call_boundary_right(double S_max) const;
+    call_boundary_right(double x_max, double tau) const;
 
     double
-    put_boundary_left(double t) const;
+    put_boundary_left(double tau) const;
 
     double
     put_boundary_right(void) const;

@@ -63,9 +63,9 @@ void FDMBase::set_initial_conditions() {
 }
 
 
-void FDMBase::calculate_boundary_conditions_call(Eigen::VectorXd & u_new) {
+void FDMBase::calculate_boundary_conditions_call(Eigen::VectorXd & u_new, double tau) {
   u_new[0] = pde->call_boundary_left();
-  u_new[n-1] = pde->call_boundary_right(Nplus*dx);
+  u_new[n-1] = pde->call_boundary_right(Nplus*dx, tau);
 }
 
 
@@ -73,14 +73,18 @@ matrix FDMEulerExplicit::solve(){
   matrix result;
   BuildMatrix(); //building A and I;
   Eigen::VectorXd u = u0;
-  calculate_boundary_conditions_call(u);
+  double time_step = 0.0;
+
+  calculate_boundary_conditions_call(u, time_step);
   result.push_back(u);
   alpha = dt/(dx*dx);
+  time_step += dt;
 
   for(unsigned j = 1; j < M; j++){
     u = (I-alpha*A)*u;
-    calculate_boundary_conditions_call(u);
+    calculate_boundary_conditions_call(u,time_step);
     result.push_back(u);
+    time_step += dt;
   }
 
   return result;
@@ -92,9 +96,12 @@ matrix FDMEulerImplicit::solve(){
     BuildMatrix(); //building A and I;
 
     Eigen::VectorXd u = u0;
-    calculate_boundary_conditions_call(u);
+    double time_step = 0.0;
+
+    calculate_boundary_conditions_call(u,time_step);
     result.push_back(u);
     alpha = dt/(dx*dx);
+    time_step += dt;
 
     Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
     solver.compute(I + alpha*A);
@@ -110,8 +117,9 @@ matrix FDMEulerImplicit::solve(){
         std::cerr << "solving failed" << std::endl;
       }
 
-      calculate_boundary_conditions_call(u);
+      calculate_boundary_conditions_call(u,time_step);
       result.push_back(u);
+      time_step += dt;
     }
 
     return result;
@@ -123,9 +131,11 @@ matrix FDMCranckNicholson::solve(){
     BuildMatrix(); //building A and I;
 
     Eigen::VectorXd u = u0;
-    calculate_boundary_conditions_call(u);
+    double time_step = 0.0;
+    calculate_boundary_conditions_call(u,time_step);
     result.push_back(u);
     alpha = dt/(dx*dx);
+    time_step += dt;
 
     Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
     solver.compute(I + alpha*A);
@@ -141,8 +151,9 @@ matrix FDMCranckNicholson::solve(){
         std::cerr << "solving failed" << std::endl;
       }
 
-      calculate_boundary_conditions_call(u);
+      calculate_boundary_conditions_call(u,time_step);
       result.push_back(u);
+      time_step += dt;
     }
 
     return result;

@@ -9,12 +9,12 @@ double BlackScholesPDE::call_boundary_left()const{
   return 0.0;
 }
 
-double BlackScholesPDE::call_boundary_right(double S_max) const {
-  return S_max;
+double BlackScholesPDE::call_boundary_right(double x_max, double tau) const {
+  return exp(0.5 * (option->get_k() + 1 ) * x_max + 0.25 * (option->get_k() + 1 )*(option->get_k() + 1 ) * tau);
 }
 
-double BlackScholesPDE::put_boundary_left(double t) const{
-  return option->get_E()*exp(-option->get_r() * (option->get_T() - t));
+double BlackScholesPDE::put_boundary_left(double tau) const{
+  return exp(0.25 * (option->get_k() - 1) * (option->get_k() - 1) * tau );
 }
 
 double BlackScholesPDE::put_boundary_right(void)const{
