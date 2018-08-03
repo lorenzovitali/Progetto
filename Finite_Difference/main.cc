@@ -5,7 +5,7 @@
 #include <iostream>
 
 int main(int argc, char* argv[]){
-  
+
   GetPot file("input.txt");
   double E = file("E", 0.0);
   double r = file("r", 0.05);
@@ -31,6 +31,7 @@ int main(int argc, char* argv[]){
   std::cout << "alpha: " << fdm_EE.get_alpha() << std::endl;
   std::cout << "dx: " << fdm_EE.get_dx() << std::endl;
   std::cout << "dt: "<< fdm_EE.get_dt() << std::endl;
+  std::cout << "k: " << call->get_k() << std::endl;
 
   std::cout << "rows: "<< solution.size() << std::endl;
   std::cout << "columns: " << solution[0].size() << std::endl;
