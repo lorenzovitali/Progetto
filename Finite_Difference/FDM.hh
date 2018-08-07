@@ -16,15 +16,16 @@ class FDMBase {
   BlackScholesPDE* pde;
 
   //Space domain [Nminus*dx,Nplus*dx]
-  int long Nminus = -50;
-  unsigned long Nplus = 50;
-  unsigned long n; //number of space intervals
+  int long Nminus;
+  int long Nplus;
+  int long N; //number of space intervals
   double dx;
   std::vector<double> x_values;
 
   //Time domain [0, 1/2*simga^2*T]
   unsigned long M; //number of time intervals
   double dt;
+  std::vector<double> tau_values;
 
   //coefficients
   double alpha;
@@ -36,7 +37,7 @@ class FDMBase {
   Eigen::SparseMatrix<double, Eigen::RowMajor> A, I;
 
   // Constructor
-  FDMBase(unsigned long _n , unsigned long _M, BlackScholesPDE* _pde);
+  FDMBase(int _N , double dx, unsigned long _M, BlackScholesPDE* _pde);
 
   virtual void calculate_step_sizes();
   virtual void set_initial_conditions();
@@ -48,15 +49,19 @@ class FDMBase {
   double get_dt()const{ return dt; }
   double get_dx()const{ return dx; }
   double get_alpha()const{ return alpha; }
+  std::vector<double> get_x() const{ return x_values; }
+  std::vector<double> get_tau() const{ return tau_values; }
+
 
   void BuildMatrix();
+  void change_var(matrix&);
   virtual matrix solve() = 0;
 };
 
 
 class FDMEulerExplicit : public FDMBase {
  public:
-  FDMEulerExplicit(unsigned long _n, unsigned long _M, BlackScholesPDE* _pde):FDMBase(_n, _M, _pde){}
+  FDMEulerExplicit(int _N, double dx, unsigned long _M, BlackScholesPDE* _pde):FDMBase(_N, dx, _M, _pde){}
 
   matrix solve();
 };
@@ -64,14 +69,14 @@ class FDMEulerExplicit : public FDMBase {
 
 class FDMEulerImplicit : public FDMBase{
   public:
-    FDMEulerImplicit(unsigned long _n, unsigned long _M, BlackScholesPDE* _pde):FDMBase(_n, _M, _pde){}
+    FDMEulerImplicit(int _N, double dx, unsigned long _M, BlackScholesPDE* _pde):FDMBase(_N, dx, _M, _pde){}
 
     matrix solve();
 };
 
 class FDMCranckNicholson : public FDMBase{
 public:
-  FDMCranckNicholson(unsigned long _n, unsigned long _M, BlackScholesPDE* _pde):FDMBase(_n, _M, _pde){}
+  FDMCranckNicholson(int _N, double dx, unsigned long _M, BlackScholesPDE* _pde):FDMBase(_N, dx, _M, _pde){}
 
   matrix solve();
 };

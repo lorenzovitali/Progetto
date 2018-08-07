@@ -11,18 +11,19 @@ int main(int argc, char* argv[]){
   double r = file("r", 0.05);
   double T = file("T", 1.00);
   double sigma = file("sigma", 0.2);
-  unsigned n = file("n", 1000); //space intervals
+  int N = file("N", 100); //space intervals
+  double dx = file("dx", 0.05);
   unsigned M = file("M", 10); //time intervals
 
   Option* call = new EuropeanCall(E, r, T, sigma);
   BlackScholesPDE* pde = new BlackScholesPDE(call);
 
-  FDMEulerExplicit fdm_EE (n, M, pde);
+  FDMEulerImplicit fdm_EE (N, dx, M, pde);
   matrix solution;
   solution = fdm_EE.solve() ;
 
-  for(unsigned i=0;i<M ;++i){
-    for(unsigned j=0;j<n;++j){
+  for(unsigned i = 0; i < M ;++i){
+    for(unsigned j = 0; j < N; ++j){
       std::cout << solution[i][j] << "\t";
     }
     std::cout << "\n" << std::endl;
