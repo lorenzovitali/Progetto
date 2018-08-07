@@ -7,7 +7,6 @@
 #include <Eigen/SparseLU>
 
 #include "PDE.hh"
-//Quasi ultimato
 
 typedef std::vector<Eigen::VectorXd> matrix;
 
@@ -39,10 +38,10 @@ class FDMBase {
   // Constructor
   FDMBase(int _N , double dx, unsigned long _M, BlackScholesPDE* _pde);
 
-  virtual void calculate_step_sizes();
-  virtual void set_initial_conditions();
-  virtual void calculate_boundary_conditions_call(Eigen::VectorXd&, double);
-  //virtual void calculate_boundary_conditions_put();
+  void calculate_step_sizes();
+  void set_initial_conditions();
+  void calculate_boundary_conditions_call(Eigen::VectorXd&, double);
+  void calculate_boundary_conditions_put(Eigen::VectorXd&, double);
 
  public:
 

@@ -51,7 +51,6 @@ void FDMBase::calculate_step_sizes() {
 
 void FDMBase::set_initial_conditions() {
   // Spatial settings
-  std::cout << Nminus << "\t" << Nplus << std::endl;
   double cur_spot = Nminus*dx;
   x_values.reserve(N);
   u0.resize(N);
@@ -71,6 +70,11 @@ void FDMBase::calculate_boundary_conditions_call(Eigen::VectorXd & u_new, double
   u_new[N-1] = pde->call_boundary_right(Nplus*dx, tau);
 }
 
+void FDMBase::calculate_boundary_conditions_put(Eigen::VectorXd & u_new, double tau){
+  u_new[0] = pde->put_boundary_left(tau);
+  u_new[N-1] = pde->put_boundary_right();
+}
+
 
   void FDMBase::change_var(matrix& matrice){
     for(unsigned i = 0; i < M; ++i){
@@ -88,14 +92,14 @@ matrix FDMEulerExplicit::solve(){
   tau_values.reserve(M);
   tau_values.push_back(time_step);
 
-  calculate_boundary_conditions_call(u, time_step);
+  calculate_boundary_conditions_put(u, time_step);
   result.push_back(u);
   alpha = dt/(dx*dx);
   time_step += dt;
 
   for(unsigned i = 1; i < M; i++){
     u = (I-alpha*A)*u;
-    calculate_boundary_conditions_call(u,time_step);
+    calculate_boundary_conditions_put(u,time_step);
     result.push_back(u);
     tau_values.push_back(time_step);
     time_step += dt;
@@ -116,7 +120,7 @@ matrix FDMEulerImplicit::solve(){
     tau_values.reserve(M);
     tau_values.push_back(time_step);
 
-    calculate_boundary_conditions_call(u,time_step);
+    calculate_boundary_conditions_put(u,time_step);
     result.push_back(u);
     alpha = dt/(dx*dx);
     time_step += dt;
@@ -135,7 +139,7 @@ matrix FDMEulerImplicit::solve(){
         std::cerr << "solving failed" << std::endl;
       }
 
-      calculate_boundary_conditions_call(u,time_step);
+      calculate_boundary_conditions_put(u,time_step);
       result.push_back(u);
       tau_values.push_back(time_step);
       time_step += dt;
@@ -155,7 +159,7 @@ matrix FDMCranckNicholson::solve(){
     tau_values.reserve(M);
     tau_values.push_back(time_step);
 
-    calculate_boundary_conditions_call(u,time_step);
+    calculate_boundary_conditions_put(u,time_step);
     result.push_back(u);
     alpha = dt/(dx*dx);
     time_step += dt;
@@ -174,7 +178,7 @@ matrix FDMCranckNicholson::solve(){
         std::cerr << "solving failed" << std::endl;
       }
 
-      calculate_boundary_conditions_call(u,time_step);
+      calculate_boundary_conditions_put(u,time_step);
       result.push_back(u);
       tau_values.push_back(time_step);
       time_step += dt;

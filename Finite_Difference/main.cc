@@ -15,12 +15,12 @@ int main(int argc, char* argv[]){
   double dx = file("dx", 0.05);
   unsigned M = file("M", 10); //time intervals
 
-  Option* call = new EuropeanCall(E, r, T, sigma);
-  BlackScholesPDE* pde = new BlackScholesPDE(call);
+  Option* put = new EuropeanPut(E, r, T, sigma);
+  BlackScholesPDE* pde = new BlackScholesPDE(put);
 
-  FDMEulerImplicit fdm_EE (N, dx, M, pde);
+  FDMEulerExplicit fdm (N, dx, M, pde);
   matrix solution;
-  solution = fdm_EE.solve() ;
+  solution = fdm.solve() ;
 
   for(unsigned i = 0; i < M ;++i){
     for(unsigned j = 0; j < N; ++j){
@@ -29,10 +29,10 @@ int main(int argc, char* argv[]){
     std::cout << "\n" << std::endl;
   }
 
-  std::cout << "alpha: " << fdm_EE.get_alpha() << std::endl;
-  std::cout << "dx: " << fdm_EE.get_dx() << std::endl;
-  std::cout << "dt: "<< fdm_EE.get_dt() << std::endl;
-  std::cout << "k: " << call->get_k() << std::endl;
+  std::cout << "alpha: " << fdm.get_alpha() << std::endl;
+  std::cout << "dx: " << fdm.get_dx() << std::endl;
+  std::cout << "dt: "<< fdm.get_dt() << std::endl;
+  std::cout << "k: " << put->get_k() << std::endl;
 
   std::cout << "rows: "<< solution.size() << std::endl;
   std::cout << "columns: " << solution[0].size() << std::endl;
