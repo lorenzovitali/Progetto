@@ -2,7 +2,7 @@
 #include "FDM.hh"
 //Quasi ultimato
 
-FDMBase::FDMBase(int _N, double _dx, unsigned long _M, BlackScholesPDE* _pde) :N(_N), dx(_dx), M(_M), pde(_pde){
+FDMBase::FDMBase(int _N, double _dx, unsigned long _M, std::shared_ptr<BlackScholesPDE> _pde) :N(_N), dx(_dx), M(_M), pde(_pde){
 
                                       calculate_step_sizes();
                                       set_initial_conditions();

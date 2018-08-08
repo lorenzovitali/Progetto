@@ -15,8 +15,8 @@ int main(int argc, char* argv[]){
   double dx = file("dx", 0.05);
   unsigned M = file("M", 10); //time intervals
 
-  Option* put = new EuropeanPut(E, r, T, sigma);
-  BlackScholesPDE* pde = new BlackScholesPDE(put);
+  std::shared_ptr<Option> put = std::make_shared<EuropeanPut> (EuropeanPut(E, r, T, sigma));
+  std::shared_ptr<BlackScholesPDE> pde = std::make_shared<BlackScholesPDE> (BlackScholesPDE(put));
 
   FDMEulerExplicit fdm (N, dx, M, pde);
   matrix solution;

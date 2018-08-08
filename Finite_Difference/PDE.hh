@@ -6,19 +6,15 @@
 
 class BlackScholesPDE {
   private:
-    //std::shared_ptr<Option> option;
-    Option* option;
+    std::shared_ptr<Option> option;
+    //Option* option;
 
   public:
-    BlackScholesPDE(Option* _option): option(_option){}
+    BlackScholesPDE(std::shared_ptr<Option> _option): option(_option) {}
 
+    std::shared_ptr<Option> get_option()const{return option;}
 
-    //coefficients
-    double diff_coeff(void) const;
-
-    Option* get_option()const{return option;}
-
-    //boundaries for CALL
+    //boundaries
     double
     call_boundary_left(void) const;
 

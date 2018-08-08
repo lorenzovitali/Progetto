@@ -12,7 +12,7 @@ typedef std::vector<Eigen::VectorXd> matrix;
 
 class FDMBase {
  protected:
-  BlackScholesPDE* pde;
+  std::shared_ptr<BlackScholesPDE> pde;
 
   //Space domain [Nminus*dx,Nplus*dx]
   int long Nminus;
@@ -36,7 +36,7 @@ class FDMBase {
   Eigen::SparseMatrix<double, Eigen::RowMajor> A, I;
 
   // Constructor
-  FDMBase(int _N , double dx, unsigned long _M, BlackScholesPDE* _pde);
+  FDMBase(int _N , double dx, unsigned long _M, std::shared_ptr<BlackScholesPDE> _pde);
 
   void calculate_step_sizes();
   void set_initial_conditions();
@@ -60,7 +60,8 @@ class FDMBase {
 
 class FDMEulerExplicit : public FDMBase {
  public:
-  FDMEulerExplicit(int _N, double dx, unsigned long _M, BlackScholesPDE* _pde):FDMBase(_N, dx, _M, _pde){}
+  FDMEulerExplicit(int _N, double dx, unsigned long _M, std::shared_ptr<BlackScholesPDE> _pde):
+    FDMBase(_N, dx, _M, _pde){}
 
   matrix solve();
 };
@@ -68,14 +69,16 @@ class FDMEulerExplicit : public FDMBase {
 
 class FDMEulerImplicit : public FDMBase{
   public:
-    FDMEulerImplicit(int _N, double dx, unsigned long _M, BlackScholesPDE* _pde):FDMBase(_N, dx, _M, _pde){}
+    FDMEulerImplicit(int _N, double dx, unsigned long _M, std::shared_ptr<BlackScholesPDE> _pde):
+      FDMBase(_N, dx, _M, _pde){}
 
     matrix solve();
 };
 
 class FDMCranckNicholson : public FDMBase{
 public:
-  FDMCranckNicholson(int _N, double dx, unsigned long _M, BlackScholesPDE* _pde):FDMBase(_N, dx, _M, _pde){}
+  FDMCranckNicholson(int _N, double dx, unsigned long _M, std::shared_ptr<BlackScholesPDE> _pde):
+    FDMBase(_N, dx, _M, _pde){}
 
   matrix solve();
 };

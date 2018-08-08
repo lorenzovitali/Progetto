@@ -1,10 +1,5 @@
 #include "PDE.hh"
 
-// Diffusion coefficient
-double BlackScholesPDE::diff_coeff(void) const {
-  return 1;
-}
-
 double BlackScholesPDE::call_boundary_left()const{
   return 0.0;
 }
