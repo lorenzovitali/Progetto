@@ -65,18 +65,12 @@ void FDMBase::set_initial_conditions() {
 }
 
 
-void FDMBase::calculate_boundary_conditions_call(Eigen::VectorXd & u_new, double tau) {
-  u_new[0] = pde->call_boundary_left();
-  u_new[N-1] = pde->call_boundary_right(Nplus*dx, tau);
+void FDMBase::calculate_boundary_conditions(Eigen::VectorXd & u_new, double tau) {
+  u_new[0] = pde->boundary_left(Nminus*dx, tau);
+  u_new[N-1] = pde->boundary_right(Nplus*dx, tau);
 }
 
-void FDMBase::calculate_boundary_conditions_put(Eigen::VectorXd & u_new, double tau){
-  u_new[0] = pde->put_boundary_left(Nminus*dx, tau);
-  u_new[N-1] = pde->put_boundary_right();
-}
-
-
-  void FDMBase::change_var(matrix& matrice){
+void FDMBase::change_var(matrix& matrice){
     for(unsigned i = 0; i < M; ++i){
       for(unsigned j = 0; j < N; ++j){
         matrice[i][j] = pde->get_option()->get_E()*matrice[i][j] * exp(-0.5 * (pde->get_option()->get_k() - 1) * x_values[j] - 0.25*(pde->get_option()->get_k() + 1)*(pde->get_option()->get_k() + 1) *tau_values[i]);
@@ -93,7 +87,7 @@ matrix FDMEulerExplicit::solve(){
   tau_values.push_back(time_step);
 
   //calculate_boundary_conditions_put(u, time_step);
-  calculate_boundary_conditions_call(u, time_step);
+  calculate_boundary_conditions(u, time_step);
   result.push_back(u);
   alpha = dt/(dx*dx);
   time_step += dt;
@@ -101,7 +95,7 @@ matrix FDMEulerExplicit::solve(){
   for(unsigned i = 1; i < M; i++){
     u = (I-alpha*A)*u;
     //calculate_boundary_conditions_put(u,time_step);
-    calculate_boundary_conditions_call(u, time_step);
+    calculate_boundary_conditions(u, time_step);
     result.push_back(u);
     tau_values.push_back(time_step);
     time_step += dt;
@@ -123,7 +117,7 @@ matrix FDMEulerImplicit::solve(){
     tau_values.push_back(time_step);
 
     //calculate_boundary_conditions_put(u,time_step);
-    calculate_boundary_conditions_call(u, time_step);
+    calculate_boundary_conditions(u, time_step);
     result.push_back(u);
     alpha = dt/(dx*dx);
     time_step += dt;
@@ -143,7 +137,7 @@ matrix FDMEulerImplicit::solve(){
       }
 
       //calculate_boundary_conditions_put(u,time_step);
-      calculate_boundary_conditions_call(u, time_step);
+      calculate_boundary_conditions(u, time_step);
       result.push_back(u);
       tau_values.push_back(time_step);
       time_step += dt;
@@ -164,7 +158,7 @@ matrix FDMCranckNicholson::solve(){
     tau_values.push_back(time_step);
 
     //calculate_boundary_conditions_put(u,time_step);
-    calculate_boundary_conditions_call(u, time_step);
+    calculate_boundary_conditions(u, time_step);
     result.push_back(u);
     alpha = dt/(dx*dx);
     time_step += dt;
@@ -184,7 +178,7 @@ matrix FDMCranckNicholson::solve(){
       }
 
       //calculate_boundary_conditions_put(u,time_step);
-      calculate_boundary_conditions_call(u, time_step);
+      calculate_boundary_conditions(u, time_step);
       result.push_back(u);
       tau_values.push_back(time_step);
       time_step += dt;

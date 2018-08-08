@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
   unsigned M = file("M", 10); //time intervals
 
   std::shared_ptr<Option> call = std::make_shared<EuropeanCall> (EuropeanCall(E, r, T, sigma));
-  std::shared_ptr<BlackScholesPDE> pde = std::make_shared<BlackScholesPDE> (BlackScholesPDE(call));
+  std::shared_ptr<BlackScholesPDE> pde = std::make_shared<BlackScholesPDECall> (BlackScholesPDECall(call));
 
   FDMEulerExplicit fdm (N, dx, M, pde);
   matrix solution;

@@ -40,8 +40,7 @@ class FDMBase {
 
   void calculate_step_sizes();
   void set_initial_conditions();
-  void calculate_boundary_conditions_call(Eigen::VectorXd&, double);
-  void calculate_boundary_conditions_put(Eigen::VectorXd&, double);
+  void calculate_boundary_conditions(Eigen::VectorXd&, double);
 
  public:
 

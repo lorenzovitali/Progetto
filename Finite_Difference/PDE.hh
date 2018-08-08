@@ -5,7 +5,7 @@
 #include "Option.hh"
 
 class BlackScholesPDE {
-  private:
+  protected:
     std::shared_ptr<Option> option;
     //Option* option;
 
@@ -15,24 +15,28 @@ class BlackScholesPDE {
     std::shared_ptr<Option> get_option()const{return option;}
 
     //boundaries
-    double
-    call_boundary_left(void) const;
+    virtual double boundary_left(double x, double tau) const = 0;
 
-    double
-    call_boundary_right(double x_max, double tau) const;
+    virtual double boundary_right(double x, double tau) const = 0;
 
-    double
-    put_boundary_left(double x_min, double tau) const;
-
-    double
-    put_boundary_right(void) const;
-
-    double
-    init_cond(double x);
-
-
-
-
+    double init_cond(double x);
 };
 
+class BlackScholesPDECall:public BlackScholesPDE{
+  public:
+    BlackScholesPDECall(std::shared_ptr<Option> _option): BlackScholesPDE(_option){}
+
+    double boundary_left(double x, double tau) const;
+
+    double boundary_right(double x, double tau) const;
+};
+
+class BlackScholesPDEPut:public BlackScholesPDE{
+  public:
+    BlackScholesPDEPut(std::shared_ptr<Option> _option): BlackScholesPDE(_option){}
+
+    double boundary_left(double x, double tau) const;
+
+    double boundary_right(double x, double tau) const;
+};
 #endif
