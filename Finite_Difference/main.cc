@@ -15,8 +15,8 @@ int main(int argc, char* argv[]){
   double dx = file("dx", 0.05);
   unsigned M = file("M", 10); //time intervals
 
-  std::shared_ptr<Option> put = std::make_shared<EuropeanPut> (EuropeanPut(E, r, T, sigma));
-  std::shared_ptr<BlackScholesPDE> pde = std::make_shared<BlackScholesPDE> (BlackScholesPDE(put));
+  std::shared_ptr<Option> call = std::make_shared<EuropeanCall> (EuropeanCall(E, r, T, sigma));
+  std::shared_ptr<BlackScholesPDE> pde = std::make_shared<BlackScholesPDE> (BlackScholesPDE(call));
 
   FDMEulerExplicit fdm (N, dx, M, pde);
   matrix solution;
@@ -32,7 +32,7 @@ int main(int argc, char* argv[]){
   std::cout << "alpha: " << fdm.get_alpha() << std::endl;
   std::cout << "dx: " << fdm.get_dx() << std::endl;
   std::cout << "dt: "<< fdm.get_dt() << std::endl;
-  std::cout << "k: " << put->get_k() << std::endl;
+  std::cout << "k: " << call->get_k() << std::endl;
 
   std::cout << "rows: "<< solution.size() << std::endl;
   std::cout << "columns: " << solution[0].size() << std::endl;
