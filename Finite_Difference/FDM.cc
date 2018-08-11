@@ -1,6 +1,5 @@
 #include <iostream>
 #include "FDM.hh"
-//Quasi ultimato
 
 FDMBase::FDMBase(int _N, double _dx, unsigned long _M, std::shared_ptr<BlackScholesPDE> _pde) :N(_N), dx(_dx), M(_M), pde(_pde){
 
@@ -86,7 +85,6 @@ matrix FDMEulerExplicit::solve(){
   tau_values.reserve(M);
   tau_values.push_back(time_step);
 
-  //calculate_boundary_conditions_put(u, time_step);
   calculate_boundary_conditions(u, time_step);
   result.push_back(u);
   alpha = dt/(dx*dx);
@@ -94,7 +92,6 @@ matrix FDMEulerExplicit::solve(){
 
   for(unsigned i = 1; i < M; i++){
     u = (I-alpha*A)*u;
-    //calculate_boundary_conditions_put(u,time_step);
     calculate_boundary_conditions(u, time_step);
     result.push_back(u);
     tau_values.push_back(time_step);
@@ -116,7 +113,6 @@ matrix FDMEulerImplicit::solve(){
     tau_values.reserve(M);
     tau_values.push_back(time_step);
 
-    //calculate_boundary_conditions_put(u,time_step);
     calculate_boundary_conditions(u, time_step);
     result.push_back(u);
     alpha = dt/(dx*dx);
@@ -136,7 +132,6 @@ matrix FDMEulerImplicit::solve(){
         std::cerr << "solving failed" << std::endl;
       }
 
-      //calculate_boundary_conditions_put(u,time_step);
       calculate_boundary_conditions(u, time_step);
       result.push_back(u);
       tau_values.push_back(time_step);
@@ -157,7 +152,6 @@ matrix FDMCranckNicholson::solve(){
     tau_values.reserve(M);
     tau_values.push_back(time_step);
 
-    //calculate_boundary_conditions_put(u,time_step);
     calculate_boundary_conditions(u, time_step);
     result.push_back(u);
     alpha = dt/(dx*dx);
@@ -177,7 +171,6 @@ matrix FDMCranckNicholson::solve(){
         std::cerr << "solving failed" << std::endl;
       }
 
-      //calculate_boundary_conditions_put(u,time_step);
       calculate_boundary_conditions(u, time_step);
       result.push_back(u);
       tau_values.push_back(time_step);
