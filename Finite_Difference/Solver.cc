@@ -81,8 +81,8 @@ Matrice SOR_EI::solve(double w){
 
     b = risultato[i-1];
 
-    //b[1] += alpha*pde->boundary_left(Nminus*dx, tau_values[i]);
-    //b[N-1] += alpha*pde->boundary_right(Nplus*dx, tau_values[i]);
+    b[1] += alpha*pde->boundary_left(Nminus*dx, tau_values[i]);
+    b[N-1] += alpha*pde->boundary_right(Nplus*dx, tau_values[i]);
 
     //std::cout << pde->boundary_right(Nplus*dx, tau_values[i]) << std::endl;
 
@@ -131,13 +131,6 @@ Matrice PSOR_CN::solve(double w){
   iter = 0;
   for(unsigned i = 1; i <= M; ++i){
 
-
-
-    //b[1] += alpha/2*pde->boundary_left(Nminus*dx, tau_values[i]);
-    //b[N-1] += alpha/2*pde->boundary_right(Nplus*dx, tau_values[i]);
-
-    //std::cout << pde->boundary_right(Nplus*dx, tau_values[i]) << std::endl;
-
     err = 10000;
 
     u = risultato[i-1];
@@ -148,8 +141,16 @@ Matrice PSOR_CN::solve(double w){
 
       for(unsigned j = 1; j < N ; ++j){
 
-        b = (1 - alpha)*risultato[i-1][j] + alpha/2*(risultato[i-1][j+1] + risultato[i-1][j-1]);
+        if(j==1){
+          b = (1 - alpha)*risultato[i-1][j] + alpha/2*(risultato[i-1][j+1] + risultato[i-1][j-1]) + alpha/2*pde->boundary_left(Nminus*dx, tau_values[i]);
+        }
+        else if(j==N-1)
+            b = (1 - alpha)*risultato[i-1][j] + alpha/2*(risultato[i-1][j+1] + risultato[i-1][j-1]) + alpha/2*pde->boundary_right(Nplus*dx, tau_values[i]);
+        else{
+            b = (1 - alpha)*risultato[i-1][j] + alpha/2*(risultato[i-1][j+1] + risultato[i-1][j-1]);
+        }
         //std::cout << "x: " << x_values[j] << std::endl;
+
         y = ( b + alpha/2*(u[j-1] + u[j+1]) )/(1+alpha);
         g = exp(0.25 * (pde->get_option()->get_k()+1)*(pde->get_option()->get_k()+1) * tau_values[i]) * pde->init_cond(x_values[j]);
         y = std::max( u[j] + w*(y - u[j]), g);
