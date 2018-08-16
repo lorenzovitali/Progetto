@@ -17,12 +17,12 @@ class FDMBase {
   //Space domain [Nminus*dx,Nplus*dx]
   int long Nminus;
   int long Nplus;
-  int long N; //number of space intervals
+  int long N;
   double dx;
   std::vector<double> x_values;
 
   //Time domain [0, 1/2*simga^2*T]
-  unsigned long M; //number of time intervals
+  unsigned long M; 
   double dt;
   std::vector<double> tau_values;
 

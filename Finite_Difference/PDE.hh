@@ -7,7 +7,6 @@
 class BlackScholesPDE {
   protected:
     std::shared_ptr<Option> option;
-    //Option* option;
 
   public:
     BlackScholesPDE(std::shared_ptr<Option> _option): option(_option) {}

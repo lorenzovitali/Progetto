@@ -49,7 +49,7 @@ void FDMBase::calculate_step_sizes() {
 
 
 void FDMBase::set_initial_conditions() {
-  // Spatial settings
+  
   double cur_spot = Nminus*dx;
   x_values.reserve(N+1);
   u0.resize(N+1);

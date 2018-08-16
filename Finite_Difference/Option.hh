@@ -20,7 +20,7 @@ class Option {
 
     virtual void set_payoff(double) = 0;
 
-    //getter methods
+    //getters
     double
     get_E() const {return E;}
 

@@ -9,7 +9,6 @@ void Solver::set_initial_conditions() {
     u0[j] = pde->init_cond(cur_spot);
     x_values.push_back(cur_spot);
     cur_spot += dx;
-    //std::cout << "x: " << x_values[j] << std::endl;
   }
 
   tau_values.reserve(M+1);
