@@ -4,7 +4,7 @@ DIR = $(mkEigenInc)
 LIB = $(mkEigenLib)
 
 EXE = main
-OBJECTS = main.o Option.o PDE.o FDM.o SOR.o
+OBJECTS = main.o Option.o PDE.o FDM.o Solver.o
 
 all:$(EXE)
 
@@ -17,7 +17,7 @@ main.o: main.cc
 FDM.o: FDM.cc FDM.hh
 	$(CXX) -c $(CPPFLAGS) -I$(DIR) $<
 
-SOR.o: SOR.hh PDE.hh
+Solver.o: Solver.hh PDE.hh
 
 PDE.o: PDE.hh Option.hh
 
