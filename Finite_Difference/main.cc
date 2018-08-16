@@ -17,15 +17,15 @@ int main(int argc, char* argv[]){
   double dx = file("dx", 0.05);
   unsigned long M = file("M", 10); //time intervals
 
-  std::shared_ptr<Option> put = std::make_shared<EuropeanPut> (EuropeanPut(E, r, T, sigma));
-  std::shared_ptr<BlackScholesPDE> pde = std::make_shared<BlackScholesPDEPut> (BlackScholesPDEPut(put));
+  std::shared_ptr<Option> call = std::make_shared<EuropeanCall> (EuropeanCall(E, r, T, sigma));
+  std::shared_ptr<BlackScholesPDE> pde = std::make_shared<BlackScholesPDECall> (BlackScholesPDECall(call));
 
-  /*FDMEulerExplicit fdm (N, dx, M, pde);
+  FDMEulerExplicit fdm (N, dx, M, pde);
   matrix solution;
-  solution = fdm.solve() ;*/
+  solution = fdm.solve() ;
 
-  SOR solver(N, dx, M, toll, pde);
-  Matrice solution = solver.solve(1.5);
+  /*SOR solver(N, dx, M, toll, pde);
+  Matrice solution = solver.solve(1.5);*/
 
   for(unsigned i = 0; i < M ;++i){
     for(unsigned j = 0; j < N; ++j){
@@ -34,7 +34,7 @@ int main(int argc, char* argv[]){
     std::cout << "\n" << std::endl;
   }
 
-  std::cout << "iter: " << solver.get_iter() << std::endl;
+  //std::cout << "iter: " << solver.get_iter() << std::endl;
 
   /*std::cout << "alpha: " << fdm.get_alpha() << std::endl;
   std::cout << "dx: " << fdm.get_dx() << std::endl;
