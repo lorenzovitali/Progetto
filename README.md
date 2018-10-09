@@ -1,3 +1,3 @@
 REGOLE FONDAMENTALI
 
-BASTA
+le tue regole sono sempre noiose, ma tvb lo stesso 
